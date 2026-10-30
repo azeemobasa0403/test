@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#080808" />
+  <title>Noetic — Commission Booking</title>
+  <style>
+    :root {
+      --black: #080808;
+      --panel: #111111;
+      --white: #f5f5f2;
+      --muted: #929292;
+      --line: #343434;
+      --soft: #d8d8d4;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--black); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% 0%, #1b1b1b 0%, transparent 52%),
+        var(--black);
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: 0.01em;
+    }
+
+    .site-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      width: min(1120px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 28px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #252525;
+    }
+
+    .wordmark {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+    }
+
+    .top-note {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+
+    main {
+      width: min(680px, calc(100% - 40px));
+      margin: auto;
+      padding: 76px 0 90px;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      animation: appear 420ms ease both;
+    }
+
+    .page.active { display: block; }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      margin: 0 0 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(54px, 12vw, 100px);
+      line-height: 0.92;
+      letter-spacing: -0.085em;
+      font-weight: 700;
+    }
+
+    h2 {
+      margin: 16px 0 0;
+      font-size: clamp(23px, 5vw, 34px);
+      font-weight: 400;
+      letter-spacing: -0.045em;
+    }
+
+    .intro {
+      max-width: 440px;
+      color: #a5a5a5;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 22px 0 42px;
+    }
+
+    .progress {
+      display: flex;
+      gap: 7px;
+      margin-bottom: 42px;
+    }
+
+    .progress span {
+      height: 2px;
+      flex: 1;
+      background: #333;
+    }
+
+    .progress span.done { background: var(--white); }
+
+    .form-grid {
+      display: grid;
+      gap: 25px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 11px;
+      color: #d1d1d1;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .field input,
+    .field textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 0;
+      outline: none;
+      background: #101010;
+      color: var(--white);
+      padding: 17px 16px;
+      font: inherit;
+      font-size: 14px;
+      transition: border-color 180ms ease, background 180ms ease;
+    }
+
+    .field input { min-height: 54px; }
+
+    .field textarea {
+      min-height: 145px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder { color: #696969; }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: #bdbdbd;
+      background: #151515;
+    }
+
+    .optional {
+      color: #777;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: none;
+    }
+
+    .field-hint {
+      color: #777;
+      font-size: 11px;
+      margin: 9px 0 0;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 38px;
+    }
+
+    button {
+      min-height: 54px;
+      padding: 0 27px;
+      border: 1px solid var(--white);
+      background: var(--white);
+      color: var(--black);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    }
+
+    button:hover {
+      background: transparent;
+      color: var(--white);
+    }
+
+    button.secondary {
+      border-color: #454545;
+      background: transparent;
+      color: #bdbdbd;
+    }
+
+    button.secondary:hover {
+      border-color: var(--white);
+      color: var(--white);
+    }
+
+    .step-label {
+      color: #777;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .thank-you {
+      text-align: center;
+      padding: 45px 0;
+    }
+
+    .checkmark {
+      width: 58px;
+      height: 58px;
+      border: 1px solid #777;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 32px;
+      font-size: 23px;
+    }
+
+    .thank-you h1 {
+      font-size: clamp(43px, 9vw, 76px);
+      letter-spacing: -0.075em;
+      line-height: 1;
+    }
+
+    .thank-you .message {
+      max-width: 420px;
+      margin: 24px auto 34px;
+      color: #a5a5a5;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .footer {
+      width: min(1120px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 22px 0 28px;
+      border-top: 1px solid #252525;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: #696969;
+      font-size: 10px;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 560px) {
+      .topbar { width: calc(100% - 36px); padding: 22px 0; }
+      .top-note { font-size: 8px; }
+      main { width: calc(100% - 36px); padding: 58px 0 66px; }
+      .intro { margin-bottom: 34px; }
+      .progress { margin-bottom: 34px; }
+      .actions { align-items: stretch; }
+      .actions button { flex: 1; padding: 0 16px; }
+      .step-label { display: none; }
+      .footer { width: calc(100% - 36px); font-size: 8px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <div class="wordmark">NOETIC</div>
+      <div class="top-note">Art • Made personal</div>
+    </header>
+
+    <main>
+      <!-- PAGE 1: CONTACT DETAILS -->
+      <section class="page active" id="page-1" aria-labelledby="main-title">
+        <div class="progress" aria-label="Step 1 of 3">
+          <span class="done"></span><span></span><span></span>
+        </div>
+        <p class="eyebrow">01 / Start a commission</p>
+        <h1 id="main-title">Noetic.</h1>
+        <h2>Commission booking</h2>
+        <p class="intro">Every piece begins with an idea. Tell us a little about yourself to start your commission enquiry.</p>
+
+        <form id="contact-form" class="form-grid">
+          <div class="field">
+            <label for="customer-name">Name</label>
+            <input id="customer-name" name="name" type="text" placeholder="Your full name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="customer-email">Email</label>
+            <input id="customer-email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="customer-phone">Phone</label>
+            <input id="customer-phone" name="phone" type="tel" placeholder="Your phone number" autocomplete="tel" required />
+          </div>
+          <div class="actions">
+            <span class="step-label">Step 1 of 2</span>
+            <button type="submit">Next <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PAGE 2: COMMISSION DETAILS -->
+      <section class="page" id="page-2" aria-labelledby="details-title">
+        <div class="progress" aria-label="Step 2 of 3">
+          <span class="done"></span><span class="done"></span><span></span>
+        </div>
+        <p class="eyebrow">02 / Your vision</p>
+        <h2 id="details-title" style="font-size: clamp(34px, 7vw, 54px); margin: 0;">Tell us about the piece.</h2>
+        <p class="intro">Share as much detail as you can. This will help us understand what you have in mind.</p>
+
+        <form id="commission-form" class="form-grid">
+          <div class="field">
+            <label for="art-description">Describe the art piece you hope to acquire</label>
+            <textarea id="art-description" name="description" placeholder="Describe your idea, preferred style, subject, size, colours or any other details..." required></textarea>
+          </div>
+          <div class="field">
+            <label for="art-purpose">Purpose of art piece <span class="optional">(Optional)</span></label>
+            <textarea id="art-purpose" name="purpose" placeholder="Is it a gift, a personal piece, for a space, or something else?" style="min-height: 100px;"></textarea>
+          </div>
+          <div class="field">
+            <label for="deadline">Commission deadline</label>
+            <input id="deadline" name="deadline" type="date" required />
+            <p class="field-hint">Choose the date you would ideally like your artwork by. We will confirm whether it is achievable.</p>
+          </div>
+          <div class="actions">
+            <button class="secondary" type="button" id="back-button">Back</button>
+            <button type="submit">Submit <span aria-hidden="true">↗</span></button>
+          </div>
+        </form>
+      </section>
+
+      <!-- PAGE 3: CONFIRMATION -->
+      <section class="page thank-you" id="page-3" aria-labelledby="thanks-title">
+        <div class="checkmark" aria-hidden="true">✓</div>
+        <p class="eyebrow">Enquiry complete</p>
+        <h1 id="thanks-title">Thank you.</h1>
+        <h2 style="font-size: clamp(23px, 5vw, 32px);">Thank you for booking with Noetic.</h2>
+        <p class="message">Your commission enquiry has been completed. We appreciate your interest in Noetic and will get back to you as soon as possible.</p>
+        <button type="button" id="restart-button">Start a new enquiry</button>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>NOETIC © <span id="year"></span></span>
+      <span>Thoughtfully made. Personally yours.</span>
+    </footer>
+  </div>
+
+  <script>
+    const pages = [
+      document.getElementById("page-1"),
+      document.getElementById("page-2"),
+      document.getElementById("page-3")
+    ];
+
+    function showPage(pageNumber) {
+      pages.forEach((page, index) => {
+        page.classList.toggle("active", index === pageNumber - 1);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.getElementById("contact-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!event.currentTarget.reportValidity()) return;
+      showPage(2);
+    });
+
+    document.getElementById("commission-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!event.currentTarget.reportValidity()) return;
+      showPage(3);
+    });
+
+    document.getElementById("back-button").addEventListener("click", () => showPage(1));
+
+    document.getElementById("restart-button").addEventListener("click", () => {
+      document.getElementById("contact-form").reset();
+      document.getElementById("commission-form").reset();
+      showPage(1);
+    });
+
+    // Prevent customers from selecting a deadline in the past.
+    const deadlineInput = document.getElementById("deadline");
+    const today = new Date();
+    const localToday = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+      .toISOString().split("T")[0];
+    deadlineInput.min = localToday;
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
